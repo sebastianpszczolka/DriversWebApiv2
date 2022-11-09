@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -230,6 +230,18 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+    ],
+    /*
+    |--------------------------------------------------------------------------
+    | MCD app const
+    |--------------------------------------------------------------------------
+    |
+    | Contain all used in app const that depends on environment
+    |
+    */
+
+    'links' => [
+        'client_app' => env('APP_CLIENT_BASE_URL', '')
     ],
 
 ];
