@@ -6,8 +6,13 @@ namespace App\Services\User;
 
 use App\Dto\Auth\CreateAccountDto;
 use App\Dto\Emails\ActivationMailParamsDto;
+use App\Dto\Emails\ResetPasswordMailParamsDto;
 use App\Exceptions\BaseException;
+use App\Exceptions\UserNotFoundException;
 use App\Http\Requests\Auth\CreateAccountRequestData;
+use App\Http\Requests\Auth\RequestActivationEmailResentRequestData;
+use App\Http\Requests\Auth\RequestResetPasswordRequestData;
+use App\Http\Requests\Auth\ResetPasswordConfirmRequestData;
 use App\Libraries\StringGenerator;
 use App\Repositories\Database\UserRepository;
 use App\Services\Mailing\MailerService;
@@ -46,73 +51,71 @@ class AccountService
             throw new BaseException($e->getMessage());
         }
     }
-//
-//    public function resentEmail(RequestActivationEmailResentRequestData $payload): void
-//    {
-//        $user = $this->userRepository->getByEmail($payload->email);
-//
-//        if (is_null($user)) {
-//            return;
-//        }
-//
-//        if ($user->isActivated() || is_null($user->getActivationCode())) {
-//            throw new BaseException(sprintf('Activated user: %s', $payload->email), 'accounts.no_account_or_activated');
-//        }
-//
-//        $this->mailerService->sendActivationEmail(new ActivationMailParamsDto([
-//            'lang' => $user->getLang(),
-//            'email' => $user->getEmail(),
-//            'userId' => $user->getId(),
-//            'activationCode' => $user->getActivationCode(),
-//        ]));
-//    }
-//
-//    public function activateAccount(int $userId, string $activationCode): void
-//    {
-//        $user = $this->userRepository->getById($userId);
-//
-//        if (is_null($user)) {
-//            throw new BaseException('Cannot active user', 'accounts.invalid_activation_code');
-//        }
-//
-//        if ($user->isActivated()) {
-//            throw new BaseException('User already activated', 'accounts.user_already_activated');
-//        }
-//
-//        if ($user->getActivationCode() !== $activationCode) {
-//            throw new BaseException('Cannot active user', 'accounts.invalid_activation_code');
-//        }
-//
-//        $this->userRepository->activateAccount($user);
-//    }
-//
-//    public function resetPasswordStepOne(RequestResetPasswordRequestData $passwordRequestDto): void
-//    {
-//        $user = $this->userRepository->getByEmail($passwordRequestDto->email);
-//
-//        if (is_null($user)) {
-//            throw new UserNotFoundException();
-//        }
-//
-//        $resetPasswordCode = $this->stringGenerator->getRandomString(50);
-//        $this->userRepository->setResetPasswordCode($user, $resetPasswordCode);
-//
-//        $this->mailerService->sendResetPasswordEmail(new ResetPasswordMailParamsDto([
-//            'lang' => $user->getLang(),
-//            'email' => $user->getEmail(),
-//            'userId' => $user->getId(),
-//            'passwordResetCode' => $resetPasswordCode,
-//        ]));
-//    }
-//
-//    public function resetPasswordStepTwo(int $userId, string $resetPasswordCode, ResetPasswordConfirmRequestData $params): void
-//    {
-//        $user = $this->userService->getById($userId);
-//
-//        if ($user->getResetPasswordCode() !== $resetPasswordCode) {
-//            throw new BaseException('Invalid reset code ','accounts.reset_code_invalid');
-//        }
-//
-//        $this->userRepository->changeUserPassword($user, $params->newPassword);
-//    }
+
+    public function resentEmail(RequestActivationEmailResentRequestData $payload): void
+    {
+        $user = $this->userRepository->getByEmail($payload->email);
+
+        if (is_null($user)) {
+            return;
+        }
+
+        if ($user->isActivated() || is_null($user->getActivationCode())) {
+            throw new BaseException(sprintf('Activated user: %s', $payload->email), 'accounts.no_account_or_activated');
+        }
+
+        $this->mailerService->sendActivationEmail(new ActivationMailParamsDto([
+            'email' => $user->getEmail(),
+            'userId' => $user->getId(),
+            'activationCode' => $user->getActivationCode(),
+        ]));
+    }
+
+    public function activateAccount(int $userId, string $activationCode): void
+    {
+        $user = $this->userRepository->getById($userId);
+
+        if (is_null($user)) {
+            throw new BaseException('Cannot active user', 'accounts.invalid_activation_code');
+        }
+
+        if ($user->isActivated()) {
+            throw new BaseException('User already activated', 'accounts.user_already_activated');
+        }
+
+        if ($user->getActivationCode() !== $activationCode) {
+            throw new BaseException('Cannot active user', 'accounts.invalid_activation_code');
+        }
+
+        $this->userRepository->activateAccount($user);
+    }
+
+    public function resetPasswordStepOne(RequestResetPasswordRequestData $passwordRequestDto): void
+    {
+        $user = $this->userRepository->getByEmail($passwordRequestDto->email);
+
+        if (is_null($user)) {
+            throw new UserNotFoundException();
+        }
+
+        $resetPasswordCode = $this->stringGenerator->getRandomString(50);
+        $this->userRepository->setResetPasswordCode($user, $resetPasswordCode);
+
+        $this->mailerService->sendResetPasswordEmail(new ResetPasswordMailParamsDto([
+            'email' => $user->getEmail(),
+            'userId' => $user->getId(),
+            'passwordResetCode' => $resetPasswordCode,
+        ]));
+    }
+
+    public function resetPasswordStepTwo(int $userId, string $resetPasswordCode, ResetPasswordConfirmRequestData $params): void
+    {
+        $user = $this->userRepository->getById($userId);
+
+        if ($user->getResetPasswordCode() !== $resetPasswordCode) {
+            throw new BaseException('Invalid reset code ', 'accounts.reset_code_invalid');
+        }
+
+        $this->userRepository->changeUserPassword($user, $params->newPassword);
+    }
 }

@@ -19,7 +19,6 @@ class BaseAction extends Controller
 
     const STATUS_OK = 'OK';
     const STATUS_ERROR = 'ERROR';
-
     const ACTION_GET = 'get';
     const ACTION_CREATED = 'created';
     const ACTION_SAVED = 'saved';
@@ -38,7 +37,7 @@ class BaseAction extends Controller
             'data' => $data,
             'action' => $action,
             'message' => $message ?? null,
-        ], $this->getCodeCode($status, $action));
+        ], $this->getCodeCode($status, $action), [], JSON_UNESCAPED_UNICODE);
     }
 
     public function createdResponse(?array $data = null, ?string $message = null): JsonResponse
@@ -48,7 +47,7 @@ class BaseAction extends Controller
             'data' => $data,
             'action' => self::ACTION_CREATED,
             'message' => $message ?? null,
-        ], $this->getCodeCode(self::STATUS_OK, self::ACTION_CREATED));
+        ], $this->getCodeCode(self::STATUS_OK, self::ACTION_CREATED), [], JSON_UNESCAPED_UNICODE);
     }
 
     public function updatedResponse(?array $data = null, ?string $message = null): JsonResponse
@@ -58,7 +57,7 @@ class BaseAction extends Controller
             'data' => $data,
             'action' => self::ACTION_UPDATED,
             'message' => $message ?? null,
-        ], $this->getCodeCode(self::STATUS_OK, self::ACTION_UPDATED));
+        ], $this->getCodeCode(self::STATUS_OK, self::ACTION_UPDATED), [], JSON_UNESCAPED_UNICODE);
     }
 
     public function deletedResponse(?string $message = null): JsonResponse
@@ -68,7 +67,7 @@ class BaseAction extends Controller
             'data' => [],
             'action' => self::ACTION_DELETED,
             'message' => $message ?? null,
-        ], $this->getCodeCode(self::STATUS_OK, self::ACTION_DELETED));
+        ], $this->getCodeCode(self::STATUS_OK, self::ACTION_DELETED), [], JSON_UNESCAPED_UNICODE);
     }
 
     private function getCodeCode(string $status, string $action): int

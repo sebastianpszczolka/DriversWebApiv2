@@ -69,6 +69,20 @@ class Handler extends ExceptionHandler
             ], 400);
         }
 
+        if ($e instanceof BaseException) {
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => trans($e->getErrorKey()),
+                'exception' => app()->environment('prod') ? [] :
+                    [
+                        'message' => $e->getMessage(),
+                        'line' => $e->getLine(),
+                        'file' => $e->getFile(),
+                        'trace' => $e->getTrace(),
+                    ]
+            ], 400);
+        }
+
         return response()->json([
             'status' => 'ERROR',
             'message' => trans('general.general_error'),
@@ -77,7 +91,7 @@ class Handler extends ExceptionHandler
                     'message' => $e->getMessage(),
                     'line' => $e->getLine(),
                     'file' => $e->getFile(),
-//                    'trace' => $e->getTrace(),//641
+                    'trace' => $e->getTrace(),//641
                 ]
         ], 500);
     }

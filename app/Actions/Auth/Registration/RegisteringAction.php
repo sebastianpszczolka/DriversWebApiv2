@@ -27,6 +27,7 @@ class RegisteringAction extends BaseAction
 
         $createAccountRequestData = new CreateAccountRequestData($data);
         $this->accountService->register($createAccountRequestData);
-        return $this->createdResponse(null, trans('messages.confirmation_email_sent'));
+
+        return $this->jsonResponse(null, static::ACTION_SAVED, static::STATUS_OK, trans('messages.confirmation_email_sent'));
     }
 }

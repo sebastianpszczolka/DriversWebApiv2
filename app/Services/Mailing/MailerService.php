@@ -10,6 +10,7 @@ use App\Exceptions\NoMailerDriversException;
 use App\Loggers\DefaultLogger;
 use Exception;
 use Illuminate\Mail\Message;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
@@ -36,7 +37,7 @@ class MailerService
         $mailParams = ['id' => $params->userId, 'activationCode' => $params->activationCode, 'baseLink' => $baseLink];
 
         try {
-            Mail::send(sprintf('%s.activate', 'en'), $mailParams, function (Message $message) use ($sendInfo) {
+            Mail::send(sprintf('%s.activate', App::currentLocale()), $mailParams, function (Message $message) use ($sendInfo) {
                 $message->to($sendInfo['emailAddress'], '')->subject($sendInfo['emailSubject']);
             });
         } catch (Exception $e) {
@@ -64,7 +65,7 @@ class MailerService
         ];
 
         try {
-            Mail::send(sprintf('%s.reset', 'en'), $emailPayload, function (Message $message) use ($emailAddress, $emailSubject) {
+            Mail::send(sprintf('%s.reset', App::currentLocale()), $emailPayload, function (Message $message) use ($emailAddress, $emailSubject) {
                 $message->to($emailAddress, '')->subject($emailSubject);
             });
         } catch (Exception $e) {

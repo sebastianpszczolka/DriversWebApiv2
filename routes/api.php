@@ -15,20 +15,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('login', Actions\Auth\LoginAction::class);
+
 Route::prefix('registration')->group(function () {
     Route::post('register', Actions\Auth\Registration\RegisteringAction::class);
-//    Route::post('resend', Actions\Auth\Registration\RequestActivationEmailResentAction::class);
-//    Route::post('activate/{userId}/{activationCode}', Actions\Auth\Registration\ActivateAccountAction::class);
-//    Route::get('terms', Actions\Auth\Registration\GetTermsAction::class);
+    Route::post('resend', Actions\Auth\Registration\RequestActivationEmailResentAction::class);
+    Route::post('activate/{userId}/{activationCode}', Actions\Auth\Registration\ActivateAccountAction::class);
+    Route::get('terms', Actions\Auth\Registration\GetTermsAction::class);
 });
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/test', function (Request $request) {
-        return 'testowa wartosc';
-    });
-
+Route::prefix('reset-password')->group(function () {
+    Route::post('', Actions\Auth\ResetPassword\StartResetProcedureAction::class);
+    Route::post('{userId}/{resetCode}', Actions\Auth\ResetPassword\SetNewPasswordAfterResetAction::class);
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+    Route::post('logout', Actions\Auth\LogoutAction::class);
 });
