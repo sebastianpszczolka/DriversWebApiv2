@@ -9,6 +9,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -59,14 +60,27 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'error' => 'Unauthenticated.',
                 'message' => trans('general.unauthorized')
-            ], 401);
+            ], 401, [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($e instanceof AppValidationException) {
             return response()->json([
                 'status' => 'ERROR',
                 'inputErrors' => $e->getValidationErrors()
-            ], 400);
+            ], 400, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($e instanceof NotFoundHttpException) {
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => trans('general.resource_do_not_exists'),
+                'exception' => app()->environment('prod') ? [] :
+                    [
+                        'message' => $e->getMessage(),
+                        'line' => $e->getLine(),
+                        'file' => $e->getFile(),
+                    ]
+            ], 404, [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($e instanceof BaseException) {
@@ -80,7 +94,7 @@ class Handler extends ExceptionHandler
                         'file' => $e->getFile(),
                         'trace' => $e->getTrace(),
                     ]
-            ], 400);
+            ], 400, [], JSON_UNESCAPED_UNICODE);
         }
 
         return response()->json([
@@ -91,8 +105,8 @@ class Handler extends ExceptionHandler
                     'message' => $e->getMessage(),
                     'line' => $e->getLine(),
                     'file' => $e->getFile(),
-                    'trace' => $e->getTrace(),//641
+                    //'trace' => $e->getTrace(),//641
                 ]
-        ], 500);
+        ], 500, [], JSON_UNESCAPED_UNICODE);
     }
 }
