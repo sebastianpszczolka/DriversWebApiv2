@@ -32,3 +32,8 @@ Route::prefix('reset-password')->group(function () {
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', Actions\Auth\LogoutAction::class);
 });
+
+Route::prefix('storage')->group(function () {
+    Route::post('msgbox', Actions\Storage\ReadMsgBoxAction::class);
+
+});

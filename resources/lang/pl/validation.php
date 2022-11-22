@@ -3,6 +3,7 @@
 return [
     'wrong_input_data' => 'Nieprawidłowe dane wejściowe.',
     'is_required' => 'Pole nie może być puste.',
+    'is_array_required' => 'Pole musi być tablicą.',
     'password_confirm_mismatch' => 'Hasło podane w polu potwierdzenia musi być takie jak w polu nowe hasło.',
     'password_must_be_at_least_x_characters_long' => 'Hasło musi mieć co najmniej :chars znaków.',
     'must_be_valid_email' => 'Wartość pola musi być prawidłowym adresem e-mail.',

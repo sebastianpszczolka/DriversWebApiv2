@@ -3,6 +3,7 @@
 return [
     'wrong_input_data' => 'Incorrect input data.',
     'is_required' => 'Field cannot be empty.',
+    'is_array_required' => 'The field must be an array.',
     'password_confirm_mismatch' => 'Password and its confirm must be the same.',
     'password_must_be_at_least_x_characters_long' => 'Password must be at least :chars chars long.',
     'must_be_valid_email' => 'Field must be valid e-mail.',
