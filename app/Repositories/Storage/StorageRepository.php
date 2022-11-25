@@ -2,6 +2,10 @@
 
 namespace App\Repositories\Storage;
 
+use App\Dto\Storage\ReadMsgBoxDto;
+use App\Http\Requests\Storage\ReadMsgBoxRequest;
+use App\Http\Requests\Storage\WriteDeviceRequest;
+
 interface StorageRepository
 {
     public function readApl(array $data): array;
@@ -10,7 +14,7 @@ interface StorageRepository
 
     public function readDev(array $data): array;
 
-    public function writeDev(array $data): array;
+    public function writeDev(WriteDeviceRequest $data): array;
 
-    public function readMsgBox(array $data): array;
+    public function readMsgBox(ReadMsgBoxRequest $data): ReadMsgBoxDto;
 }

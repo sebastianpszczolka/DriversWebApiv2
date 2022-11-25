@@ -2,6 +2,14 @@
 
 namespace App\Repositories\Storage;
 
+use App\Domain\Common\CommandsStorageRedis;
+use App\Dto\Storage\ReadMsgBoxDstDto;
+use App\Dto\Storage\ReadMsgBoxDto;
+use App\Dto\Storage\ReadMsgBoxSrcDto;
+use App\Http\Requests\Storage\ReadMsgBoxRequest;
+use App\Http\Requests\Storage\WriteDeviceRequest;
+use Illuminate\Support\Facades\Redis;
+
 class RedisStorageRepository implements StorageRepository
 {
 
@@ -23,15 +31,29 @@ class RedisStorageRepository implements StorageRepository
         return [];
     }
 
-    public function writeDev(array $data): array
+    public function writeDev(WriteDeviceRequest $data): array
     {
         // TODO: Implement writeDev() method.
-        return [];
+        return ['empty'];
     }
 
-    public function readMsgBox(array $data): array
+    public function readMsgBox(ReadMsgBoxRequest $data): ReadMsgBoxDto
     {
-        // TODO: Implement readMsgBox() method.
-        return [];
+        $inpBox = [];
+        foreach ($data->InpBox as $key) {
+            $inpBox[$key] = [];
+            while (true) {
+                $el = Redis::lPop($data->Src->install . $key);
+                if ($el === false)
+                    break;
+
+                $inpBox[$key][] = json_decode($el);
+            }
+        }
+
+        return new ReadMsgBoxDto(['InpBox' => $inpBox,
+            'Src' => ['Time' => time(), 'install' => $data->Src->install],
+            'Dst' => ['Node' => $data->Dst->Node, 'install' => $data->Dst->install]
+        ]);
     }
 }

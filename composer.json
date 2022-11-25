@@ -12,6 +12,7 @@
         "laravel/passport": "^10.4",
         "laravel/tinker": "^2.5",
         "spatie/data-transfer-object": "^2.8",
+        "ext-redis": "^5.3",
         "ext-json": "*"
     },
     "require-dev": {

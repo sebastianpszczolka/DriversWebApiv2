@@ -27,6 +27,11 @@ class BaseAction extends Controller
     const ACTION_DELETED = 'deleted';
     const ACTION_MOVED = 'moved';
 
+    public function jsonResponseRaw(array $data, int $code): JsonResponse
+    {
+        return response()->json($data, $code, [], JSON_UNESCAPED_UNICODE);
+    }
+
     public function jsonResponse(?array $data = null, ?string $action = null, ?string $status = null, ?string $message = null): JsonResponse
     {
         $action = $action ?? static::ACTION_GET;

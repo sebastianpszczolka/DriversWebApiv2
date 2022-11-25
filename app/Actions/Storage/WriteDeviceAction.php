@@ -3,16 +3,16 @@
 namespace App\Actions\Storage;
 
 use App\Actions\BaseAction;
-use App\Http\Requests\Storage\ReadMsgBoxRequest;
+use App\Http\Requests\Storage\WriteDeviceRequest;
 use App\Services\Storage\StorageService;
-use App\Validators\Storage\ReadMsgBoxActionValidator;
+use App\Validators\Storage\WriteDeviceActionValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-
-class ReadMsgBoxAction extends BaseAction
+class WriteDeviceAction extends BaseAction
 {
+
     private StorageService $storageService;
 
     public function __construct(StorageService $storeService)
@@ -24,11 +24,13 @@ class ReadMsgBoxAction extends BaseAction
     {
         $data = Request::input();
 
-        (new ReadMsgBoxActionValidator($data))->validate();
+        (new WriteDeviceActionValidator($data))->validate();
 
-        $readMsgBoxData = new ReadMsgBoxRequest($data);
-        $result = $this->storageService->readMsgBox($readMsgBoxData);
+        $writeDeviceData = new WriteDeviceRequest($data);
+        $result = $this->storageService->writeDev($writeDeviceData);
 
-        return $this->jsonResponseRaw($result->toArray(), Response::HTTP_OK);
+        return $this->jsonResponseRaw($result, Response::HTTP_OK);
+
     }
+
 }
