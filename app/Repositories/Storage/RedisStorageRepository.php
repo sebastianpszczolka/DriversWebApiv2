@@ -27,8 +27,12 @@ class RedisStorageRepository implements StorageRepository
 
     public function readApl(array $data): array
     {
-        // TODO: Implement readApl() method.
-        return [];
+        $result = [];
+
+        foreach ($data as $key) {
+            $result[$key] = Redis::hGetAll($key);
+        }
+        return $result;
     }
 
     public function writeApl(array $data): array
