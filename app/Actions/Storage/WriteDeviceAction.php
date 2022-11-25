@@ -29,8 +29,7 @@ class WriteDeviceAction extends BaseAction
         $writeDeviceData = new WriteDeviceRequest($data);
         $result = $this->storageService->writeDev($writeDeviceData);
 
-        return $this->jsonResponseRaw($result, Response::HTTP_OK);
-
+        return $this->jsonResponseRaw($result->toArray(), Response::HTTP_OK);
     }
 
 }

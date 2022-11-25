@@ -3,15 +3,20 @@
 namespace App\Repositories\Storage;
 
 use App\Domain\Common\CommandsStorageRedis;
+use App\Domain\Service\StorageRedisDevice;
 use App\Dto\Storage\ReadMsgBoxDstDto;
 use App\Dto\Storage\ReadMsgBoxDto;
 use App\Dto\Storage\ReadMsgBoxSrcDto;
+use App\Dto\Storage\WriteDeviceDto;
 use App\Http\Requests\Storage\ReadMsgBoxRequest;
 use App\Http\Requests\Storage\WriteDeviceRequest;
 use Illuminate\Support\Facades\Redis;
 
 class RedisStorageRepository implements StorageRepository
 {
+
+    private const KEY_DEVICE = '/Device/';
+    private const KEY_TIMESTAMP = 'timestamp';
 
     public function readApl(array $data): array
     {
@@ -31,10 +36,27 @@ class RedisStorageRepository implements StorageRepository
         return [];
     }
 
-    public function writeDev(WriteDeviceRequest $data): array
+    public function writeDev(WriteDeviceRequest $data): WriteDeviceDto
     {
-        // TODO: Implement writeDev() method.
-        return ['empty'];
+        Redis::pipeline(function ($pipe) use (&$data) {
+            $pipe->hMSet($data->Src->install . RedisStorageRepository::KEY_DEVICE . $data->Src->Node, [RedisStorageRepository::KEY_TIMESTAMP => time()]);
+            foreach ($data->var as $key => $set) {
+                $key = $data->Src->install . $data->Dst->mount . $key;
+
+                if (is_array($set)) {
+                    $set[RedisStorageRepository::KEY_TIMESTAMP] = time();
+                    $pipe->hMSet($key, $set);
+                } else {
+                    $pipe->Set($key, $set);
+                }
+            }
+        });
+
+        return new WriteDeviceDto([
+            'Src' => ['Time' => time(), 'install' => $data->Src->install],
+            'Dst' => ['Node' => $data->Dst->Node, 'install' => $data->Dst->install]
+        ]);
+
     }
 
     public function readMsgBox(ReadMsgBoxRequest $data): ReadMsgBoxDto
