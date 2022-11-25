@@ -37,4 +37,5 @@ Route::prefix('storage')->group(function () {
     Route::post('msgbox', Actions\Storage\ReadMsgBoxAction::class);
     Route::post('write_device', Actions\Storage\WriteDeviceAction::class);
     Route::post('read_device', Actions\Storage\ReadDeviceAction::class);
+    Route::post('write_apl', Actions\Storage\WriteAplAction::class);
 });

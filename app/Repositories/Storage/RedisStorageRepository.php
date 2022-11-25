@@ -3,23 +3,27 @@ declare(strict_types=1);
 
 namespace App\Repositories\Storage;
 
-use App\Domain\Common\CommandsStorageRedis;
-use App\Domain\Service\StorageRedisDevice;
 use App\Dto\Storage\ReadDeviceDto;
-use App\Dto\Storage\ReadMsgBoxDstDto;
 use App\Dto\Storage\ReadMsgBoxDto;
-use App\Dto\Storage\ReadMsgBoxSrcDto;
 use App\Dto\Storage\WriteDeviceDto;
 use App\Http\Requests\Storage\ReadDeviceRequest;
 use App\Http\Requests\Storage\ReadMsgBoxRequest;
 use App\Http\Requests\Storage\WriteDeviceRequest;
+use App\Loggers\DefaultLogger;
 use Illuminate\Support\Facades\Redis;
 
 class RedisStorageRepository implements StorageRepository
 {
 
+    private DefaultLogger $logger;
     private const KEY_DEVICE = '/Device/';
     private const KEY_TIMESTAMP = 'timestamp';
+    private const KEY_STREAM = 'sysStreamInp';
+
+    public function __construct(DefaultLogger $logger)
+    {
+        $this->logger = $logger;
+    }
 
     public function readApl(array $data): array
     {
@@ -29,7 +33,29 @@ class RedisStorageRepository implements StorageRepository
 
     public function writeApl(array $data): array
     {
-        // TODO: Implement writeApl() method.
+        Redis::pipeline(function ($pipe) use (&$data) {
+            foreach ($data as $key => $set) {
+                if (is_array($set)) {
+                    $pipe->hMSet($key, $set);
+                } else {
+                    $pipe->Set($key, $set);
+                }
+            }
+        });
+
+        foreach ($data as $key => $value) {
+            $items = explode("/", $key, 2);
+            if (count($items) !== 2) {
+                $this->logger->error("Can not get Node and Data from key: ${key}");
+                continue;
+            }
+
+            $listPath = Redis::hGet($key, RedisStorageRepository::KEY_STREAM);
+            if (!empty($listPath)) {
+                Redis::lPush($items[0] . $listPath, json_encode(['/' . $items[1] => time()]));
+            }
+        }
+
         return [];
     }
 
