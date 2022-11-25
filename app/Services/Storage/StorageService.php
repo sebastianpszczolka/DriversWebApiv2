@@ -2,8 +2,10 @@
 
 namespace App\Services\Storage;
 
+use App\Dto\Storage\ReadDeviceDto;
 use App\Dto\Storage\ReadMsgBoxDto;
 use App\Dto\Storage\WriteDeviceDto;
+use App\Http\Requests\Storage\ReadDeviceRequest;
 use App\Http\Requests\Storage\ReadMsgBoxRequest;
 use App\Http\Requests\Storage\WriteDeviceRequest;
 use App\Repositories\Storage\StorageRepository;
@@ -27,7 +29,7 @@ class StorageService
         return $this->storeRepository->writeApl($data);
     }
 
-    public function readDev(array $data): array
+    public function readDev(ReadDeviceRequest $data): ReadDeviceDto
     {
         return $this->storeRepository->readDev($data);
     }

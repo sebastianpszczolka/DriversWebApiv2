@@ -4,10 +4,12 @@ namespace App\Repositories\Storage;
 
 use App\Domain\Common\CommandsStorageRedis;
 use App\Domain\Service\StorageRedisDevice;
+use App\Dto\Storage\ReadDeviceDto;
 use App\Dto\Storage\ReadMsgBoxDstDto;
 use App\Dto\Storage\ReadMsgBoxDto;
 use App\Dto\Storage\ReadMsgBoxSrcDto;
 use App\Dto\Storage\WriteDeviceDto;
+use App\Http\Requests\Storage\ReadDeviceRequest;
 use App\Http\Requests\Storage\ReadMsgBoxRequest;
 use App\Http\Requests\Storage\WriteDeviceRequest;
 use Illuminate\Support\Facades\Redis;
@@ -30,10 +32,19 @@ class RedisStorageRepository implements StorageRepository
         return [];
     }
 
-    public function readDev(array $data): array
+    public function readDev(ReadDeviceRequest $data): ReadDeviceDto
     {
-        // TODO: Implement readDev() method.
-        return [];
+        $var = [];
+
+        foreach ($data->var as $key) {
+            $var[$key] = array_intersect_key(Redis::hGetAll($data->Src->install . $key), array_flip($data->Dst->members));
+        }
+
+        return new ReadDeviceDto(['var' => $var,
+            'Src' => ['Time' => time(), 'install' => $data->Src->install],
+            'Dst' => ['Node' => $data->Dst->Node, 'install' => $data->Dst->install]
+        ]);
+
     }
 
     public function writeDev(WriteDeviceRequest $data): WriteDeviceDto
