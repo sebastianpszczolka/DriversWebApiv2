@@ -19,7 +19,7 @@ Route::post('login', Actions\Auth\LoginAction::class);
 Route::prefix('registration')->group(function () {
     Route::post('register', Actions\Auth\Registration\RegisteringAction::class);
     Route::post('resend', Actions\Auth\Registration\RequestActivationEmailResentAction::class);
-    Route::post('activate/{userId}/{activationCode}', Actions\Auth\Registration\ActivateAccountAction::class);
+    Route::get('activate/{userId}/{activationCode}', Actions\Auth\Registration\ActivateAccountAction::class);
     Route::get('terms', Actions\Auth\Registration\GetTermsAction::class);
 });
 
