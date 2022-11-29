@@ -76,6 +76,7 @@ class Handler extends ExceptionHandler
                 'message' => trans('general.resource_do_not_exists'),
                 'exception' => app()->environment('prod') ? [] :
                     [
+                        'url' => $request->fullUrl(),
                         'message' => $e->getMessage(),
                         'line' => $e->getLine(),
                         'file' => $e->getFile(),
