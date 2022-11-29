@@ -25,6 +25,7 @@ Route::prefix('registration')->group(function () {
 
 Route::prefix('reset-password')->group(function () {
     Route::post('', Actions\Auth\ResetPassword\StartResetProcedureAction::class);
+    Route::get('{userId}/{resetCode}', Actions\Auth\ResetPassword\SetNewPasswordAfterResetViewAction::class);
     Route::post('{userId}/{resetCode}', Actions\Auth\ResetPassword\SetNewPasswordAfterResetAction::class);
 });
 
