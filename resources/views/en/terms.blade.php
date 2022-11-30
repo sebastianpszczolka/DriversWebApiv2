@@ -1,12 +1,12 @@
-<h2 class="terms-title">Regulamin strony www.ecypis.pl</h2>
+<h2 class="terms-title">Regulamin aplikacji Katafalk</h2>
 <h4 class="terms-subject">§ 1</h4>
 <ol>
-    <li>Właścicielem strony www.ecypis.pl [strona internetowa] jest MCD Electronics Spółka z ograniczoną odpowiedzialnością [właściciel] z siedzibą w Żywcu przy ulicy Lelewela 26 , z kapitałem zakładowym 50 000,00 zł  wpisana do Krajowego Rejestru Sądowego przez Sąd Rejonowy w Bielsku- Białej KRS 0000029052, posiadająca NIP 553-20-87-091</li>
+    <li>Właścicielem aplikacji Katafalk [strona internetowa] jest MCD Electronics Spółka z ograniczoną odpowiedzialnością [właściciel] z siedzibą w Żywcu przy ulicy Lelewela 26 , z kapitałem zakładowym 50 000,00 zł  wpisana do Krajowego Rejestru Sądowego przez Sąd Rejonowy w Bielsku- Białej KRS 0000029052, posiadająca NIP 553-20-87-091</li>
     <li>Użytkownik – osoba odwiedzająca stronę.</li>
     <li>Oferta – oferta zamieszczona przez właściciela na stronie.</li>
     <li>Dane osobowe – informacje dotyczące zidentyfikowanej lub możliwej do zidentyfikowania osoby fizycznej, przykładowo: nazwisko, adres, numer telefonu, data urodzenia, dane konta bankowego, adres IP.</li>
     <li>tanowienia ogólne</li>
-    <li>Operatorem strony internetowej www.ecypis.pl jest właściciel.</li>
+    <li>Operatorem aplikacji Katafalk jest właściciel.</li>
     <li>Przeznaczenie strony: dostęp do zdalnej konfiguracji instalacji użytkownika, dostęp do instrukcji obsługi oferowanych produktów, materiałów reklamowych, możliwość rejestracji na forum, informacja o nowościach produktowych właściciela</li>
     <li>Użytkownik jest zobowiązany do korzystania ze strony w sposób zgodny z niniejszym Regulaminem, obowiązującym prawem, ogólnymi zasadami korzystania z sieci Internet oraz celami utworzenia strony, a w szczególności w sposób nie naruszający praw osób trzecich oraz praw właściciela.</li>
     <li>W przypadku stwierdzenia, że Użytkownik narusza pkt. 3 lub dopuszcza się działań opisanych w pkt 3, właściciel ma prawo podjąć wszelkie działania prowadzące do naprawienia poniesionej w związku z tym szkody.</li>
