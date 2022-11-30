@@ -67,7 +67,7 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'status' => 'ERROR',
                 'inputErrors' => $e->getValidationErrors()
-            ], 400, [], JSON_UNESCAPED_UNICODE);
+            ], 422, [], JSON_UNESCAPED_UNICODE);
         }
 
         if ($e instanceof NotFoundHttpException) {

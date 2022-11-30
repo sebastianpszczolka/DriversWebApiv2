@@ -244,4 +244,7 @@ return [
         'client_app' => env('APP_CLIENT_BASE_URL', '')
     ],
 
+    'paths' => [
+        'controllers_path' => env('APP_ROOT_CONTROLLERS_PATH', '')
+    ],
 ];

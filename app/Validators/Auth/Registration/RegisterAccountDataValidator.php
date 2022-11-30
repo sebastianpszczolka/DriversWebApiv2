@@ -23,6 +23,7 @@ class RegisterAccountDataValidator extends AbstractValidator
             'confirmed' => trans('validation.password_confirm_mismatch'),
             'min' => trans('validation.password_must_be_at_least_x_characters_long', ['chars' => '8']),
             'unique' => trans('validation.email_is_taken'),
+            'string' => trans('validation.string')
         ];
     }
 }

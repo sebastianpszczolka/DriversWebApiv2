@@ -43,3 +43,5 @@ Route::prefix('storage')->group(function () {
     Route::post('write_device', Actions\Storage\WriteDeviceAction::class);
     Route::post('read_device', Actions\Storage\ReadDeviceAction::class);
 });
+
+Route::post('exchange', Actions\Exchange\ExchangeAction::class);
