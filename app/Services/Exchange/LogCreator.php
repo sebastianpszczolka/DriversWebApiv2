@@ -30,7 +30,7 @@ class LogCreator
      * @param $linkName string link name to path
      * @param $aplGroup string application group
      * @param $sch string schema identifier
-     * @param $data
+     * @param array $data
      * @return void
      * @throws Exception
      */
