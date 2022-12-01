@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Validators\Exchange;
 
+use App\Services\Exchange\Utils\Commands;
 use App\Validators\AbstractValidator;
 
 class ExchangeValidator extends AbstractValidator
@@ -12,12 +13,12 @@ class ExchangeValidator extends AbstractValidator
         parent::__construct($data);
 
         $this->rules = [
-            '/DNET/MST/LINK/NAME' => 'required|string',
-            '/DNET/HOST/APLGROUP' => 'required|string',
-            '/DNET/HOST/SCH' => 'required|string',
-            '/DNET/HOST/NODE' => 'required|string',
-            '/DNET/HOST/UCSN' => 'required|string',
-            '/DNET/MST/STORAGE/FILE/NAME' => 'required|string',
+            Commands::LINK_NAME => 'required|string',
+            Commands::APLGROUP => 'required|string',
+            Commands::SCH => 'required|string',
+            Commands::NODE => 'required|string',
+            Commands::UCSN => 'required|string',
+            Commands::FILE_NAME => 'required|string',
              'data' => 'required|array'
         ];
 
