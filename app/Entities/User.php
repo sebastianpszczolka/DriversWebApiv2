@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entities;
 
 use DateTime;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use JsonSerializable;
@@ -108,6 +109,12 @@ class User extends Authenticatable implements JsonSerializable
     public function updateLastLogin(): void
     {
         $this->last_login = $this->freshTimestamp();
+    }
+
+    public function installations(): BelongsToMany
+    {
+        return $this->belongsToMany(Installation::class, InstallationUser::class);
+
     }
 
     public function jsonSerialize(): array
