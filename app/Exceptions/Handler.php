@@ -51,9 +51,9 @@ class Handler extends ExceptionHandler
     {
         $e = $this->mapException($e);
 
-        if ($this->shouldntReport($e)) {
-            return;
-        }
+//        if ($this->shouldntReport($e)) {
+//            return;
+//        }
 
         if (Reflector::isCallable($reportCallable = [$e, 'report'])) {
             if ($this->container->call($reportCallable) !== false) {
