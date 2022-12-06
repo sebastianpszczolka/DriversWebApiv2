@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions;
+use App\Actions\Installations\Logs\GetLogsAction;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('installations')->group(function () {
         Route::get('', Actions\Installations\GetInstallationsAction::class);
+        Route::get('{installationID}/logs', GetLogsAction::class);
     });
 });
 

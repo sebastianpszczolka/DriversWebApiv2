@@ -46,6 +46,11 @@ class Installation extends BaseEntity
         return $this->inst_barcode;
     }
 
+    public function isAssignedToUser(User $user): bool
+    {
+        return $user->installations()->whereKey($this->getId())->exists();
+    }
+
     public function jsonSerialize(): array
     {
         return [
