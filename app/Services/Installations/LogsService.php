@@ -38,6 +38,8 @@ class LogsService
         }
 
 
+        echo($this->installationStatusRepository->getSchemaNoByInstallationBarcode($installation->getInstallationBarcode()));
+
 //        /** @var InstallationDeviceAssignment | null $deviceAssignment */
 //        $deviceAssignment = $installation->device()->first();
 //

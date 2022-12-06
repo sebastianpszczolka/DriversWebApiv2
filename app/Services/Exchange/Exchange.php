@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services\Exchange;
 
+use App\Libraries\Paths;
 use App\Loggers\DefaultLogger;
 use App\Services\Exchange\Utils\Commands;
 use App\Services\Exchange\Utils\CommandsHelper;
@@ -15,22 +16,27 @@ class Exchange
     private DefaultLogger $logger;
     private LogCreator $logCreator;
     private CurrentValues $currentValues;
+    private Paths $paths;
 
     private const DATA_FIELD = 'data';
+
 
     /**
      * The constructor.
      *
      * @param DefaultLogger $logger
+     * @param Paths $paths
      * @param LogCreator $logCreator Creating logs
      * @param CurrentValues $currentValues Current values stores and read
      */
     public function __construct(DefaultLogger $logger,
+                                Paths         $paths,
                                 LogCreator    $logCreator,
                                 CurrentValues $currentValues)
     {
 
         $this->logger = $logger;
+        $this->paths = $paths;
         $this->logCreator = $logCreator;
         $this->currentValues = $currentValues;
     }
@@ -45,7 +51,7 @@ class Exchange
      */
     public function exchangeParameters(array $data): array
     {
-        $ctrlPath = Config::get('app.paths.controllers_path');
+        $ctrlPath = $this->paths->getControllersPath();
 
         if (empty($ctrlPath)) {
             throw new Exception('Missing configuration for ctrl_path');
