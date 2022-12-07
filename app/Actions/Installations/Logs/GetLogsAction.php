@@ -7,10 +7,10 @@ use App\Actions\BaseAction;
 use App\Exceptions\InstallationNotAssignedException;
 use App\Exceptions\InstallationNotFoundException;
 use App\Exceptions\ValidationException;
-use App\Http\Requests\Installations\Logs\LogsParamsRequestData;
+use App\Http\Requests\Installations\Logs\GetLogsRequestData;
 use App\Security\AuthProvider;
 use App\Services\Installations\InstallationService;
-use App\Services\Installations\LogsService;
+use App\Services\Installations\Logs\LogsService;
 use App\Validators\Installations\Logs\LogsParamsValidator;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Request;
@@ -45,7 +45,7 @@ class GetLogsAction extends BaseAction
 
         $user = $this->authProvider->authenticated();
         $installation = $this->installationService->getById($installationId);
-        $logsParamsRequestData = new LogsParamsRequestData($data);
+        $logsParamsRequestData = new GetLogsRequestData($data);
 
         $result = $this->logsService->getLogs($user, $installation, $logsParamsRequestData);
 

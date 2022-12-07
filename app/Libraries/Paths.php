@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Libraries;
 
@@ -45,6 +46,16 @@ class Paths
         return $path;
     }
 
+    /**
+     * @param ...$args
+     * @return string
+     */
+    public function createPath(...$args): string
+    {
+        $args[0] = rtrim($args[0], '/');
+
+        return implode(DIRECTORY_SEPARATOR, $args);
+    }
 
     /**
      * Return index path from app config
@@ -66,4 +77,13 @@ class Paths
         return Config::get('app.paths.controllers_path');
     }
 
+    /**
+     * Return schema path from app config (basing on environment)
+     *
+     * @return string
+     */
+    public function getSchemaPath(): string
+    {
+        return Config::get('app.paths.sch_path');
+    }
 }

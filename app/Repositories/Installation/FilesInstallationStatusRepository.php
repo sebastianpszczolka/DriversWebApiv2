@@ -1,10 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repositories\Installation;
 
 use App\Exceptions\InstallationNotFoundException;
 use App\Libraries\Paths;
-use App\Repositories\DeviceStatus\Dto\FilesystemInfoDto;
 
 class FilesInstallationStatusRepository implements InstallationStatusRepository
 {
@@ -17,11 +17,11 @@ class FilesInstallationStatusRepository implements InstallationStatusRepository
     }
 
     /**
-     * @param int $instBarcode
-     * @return int|null
+     * @param string $instBarcode
+     * @return string|null
      * @throws InstallationNotFoundException
      */
-    public function getSchemaNoByInstallationBarcode(int $instBarcode): ?int//641 to trzeba zaimplementowac
+    public function getSchemaNoByInstallationBarcode(string $instBarcode): ?string
     {
         $path = $this->paths->getInstBasePath($instBarcode);
 
@@ -33,8 +33,6 @@ class FilesInstallationStatusRepository implements InstallationStatusRepository
         $tmp = explode('/', $path);
 
         // Trim and delete all unexpected chars
-        $nrSch = rtrim(trim(end($tmp)), ';');
-
-        return is_numeric($nrSch) ? $nrSch : null;
+        return rtrim(trim(end($tmp)), ';');
     }
 }

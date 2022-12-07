@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Services\Installations;
+namespace App\Services\Installations\Logs;
 
 use App\Dto\Installations\Logs\LogsResponseDto;
 use App\Entities\Installation;
 use App\Entities\User;
 use App\Exceptions\InstallationNotAssignedException;
-use App\Http\Requests\Installations\Logs\LogsParamsRequestData;
+use App\Http\Requests\Installations\Logs\GetLogsRequestData;
 use App\Repositories\Installation\InstallationStatusRepository;
 use App\Repositories\Logs\LogsRepository;
 
@@ -27,11 +27,11 @@ class LogsService
     /**
      * @param User $user
      * @param Installation $installation
-     * @param LogsParamsRequestData $params
+     * @param GetLogsRequestData $params
      * @return LogsResponseDto
      * @throws InstallationNotAssignedException
      */
-    public function getLogs(User $user, Installation $installation, LogsParamsRequestData $params): LogsResponseDto
+    public function getLogs(User $user, Installation $installation, GetLogsRequestData $params): LogsResponseDto
     {
         if ($installation->isAssignedToUser($user) === false) {
             throw new InstallationNotAssignedException();

@@ -2,6 +2,7 @@
 
 use App\Actions;
 use App\Actions\Installations\Logs\GetLogsAction;
+use App\Actions\Installations\Resources\ReadResourceAction;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,7 +41,15 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('installations')->group(function () {
         Route::get('', Actions\Installations\GetInstallationsAction::class);
-        Route::get('{installationID}/logs', GetLogsAction::class);
+
+        Route::prefix('{installationID}')->group(function () {
+
+            Route::post('logs', GetLogsAction::class);
+
+            Route::prefix('resources')->group(function () {
+                Route::post('read', ReadResourceAction::class);
+            });
+        });
     });
 });
 

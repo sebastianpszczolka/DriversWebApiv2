@@ -5,5 +5,5 @@ namespace App\Repositories\Installation;
 
 interface InstallationStatusRepository
 {
-    public function getSchemaNoByInstallationBarcode(int $instBarcode): ?int;
+    public function getSchemaNoByInstallationBarcode(string $instBarcode): ?string;
 }

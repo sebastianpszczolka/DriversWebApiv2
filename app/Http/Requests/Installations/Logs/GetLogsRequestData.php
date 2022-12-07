@@ -4,7 +4,7 @@ namespace App\Http\Requests\Installations\Logs;
 
 use Spatie\DataTransferObject\FlexibleDataTransferObject;
 
-class LogsParamsRequestData extends FlexibleDataTransferObject
+class GetLogsRequestData extends FlexibleDataTransferObject
 {
     public int $year;
     public ?int $month;

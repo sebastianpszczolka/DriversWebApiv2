@@ -246,6 +246,7 @@ return [
 
     'paths' => [
         'index_path' => env('APP_INDEX_PATH', ''),
+        'sch_path' => env('APP_SCH_PATH', ''),
         'controllers_path' => env('APP_ROOT_CONTROLLERS_PATH', ''),
         'server_part_path' => env('PATH_SERVER_PART', ''),
         'local_part_path' => env('PATH_LOCAL_PART', ''),
