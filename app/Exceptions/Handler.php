@@ -143,7 +143,8 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'status' => 'ERROR',
                 'message' => trans('general.resource_do_not_exists'),
-                'exception' => app()->environment('prod') ? [] :
+                'info' => $e->getMessage(),
+                'exception' => app()->isProduction() ? [] :
                     [
                         'url' => $request->fullUrl(),
                         'message' => $e->getMessage(),
@@ -157,7 +158,8 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'status' => 'ERROR',
                 'message' => trans($e->getErrorKey()),
-                'exception' => app()->environment('prod') ? [] :
+                'info' => $e->getMessage(),
+                'exception' => app()->isProduction() ? [] :
                     [
                         'message' => $e->getMessage(),
                         'line' => $e->getLine(),
@@ -170,7 +172,8 @@ class Handler extends ExceptionHandler
         return response()->json([
             'status' => 'ERROR',
             'message' => trans('general.general_error'),
-            'exception' => app()->environment('prod') ? [] :
+            'info' => $e->getMessage(),
+            'exception' => app()->isProduction() ? [] :
                 [
                     'message' => $e->getMessage(),
                     'line' => $e->getLine(),
