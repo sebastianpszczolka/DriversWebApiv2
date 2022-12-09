@@ -50,7 +50,7 @@ class Paths
      * @param ...$args
      * @return string
      */
-    public function createPath(...$args): string
+    public function joinPath(...$args): string
     {
         $args[0] = rtrim($args[0], '/');
 

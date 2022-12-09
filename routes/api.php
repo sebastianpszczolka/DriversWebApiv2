@@ -3,6 +3,7 @@
 use App\Actions;
 use App\Actions\Installations\Logs\GetLogsAction;
 use App\Actions\Installations\Resources\ReadResourceAction;
+use App\Actions\Installations\Resources\WriteResourceAction;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,6 +49,7 @@ Route::middleware('auth:api')->group(function () {
 
             Route::prefix('resources')->group(function () {
                 Route::post('read', ReadResourceAction::class);
+                Route::post('write', WriteResourceAction::class);
             });
         });
     });

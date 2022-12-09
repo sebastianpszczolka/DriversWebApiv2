@@ -10,6 +10,7 @@ use App\Exceptions\InstallationNotAssignedException;
 use App\Http\Requests\Installations\Resources\ReadResourceRequest;
 use App\Libraries\Paths;
 use App\Repositories\Installation\InstallationStatusRepository;
+use Illuminate\Http\UploadedFile;
 
 class ResourceService
 {
@@ -22,7 +23,6 @@ class ResourceService
         $this->paths = $paths;
         $this->installationStatusRepository = $installationStatusRepository;
     }
-
 
     /**
      * @param User $user
@@ -41,22 +41,22 @@ class ResourceService
         $instBarcode = (string)$installation->getInstallationBarcode();
         $schId = $this->installationStatusRepository->getSchemaNoByInstallationBarcode($instBarcode);
 
-        $instRootPath = $this->paths->createPath($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
-        $schRootPath = $this->paths->createPath($this->paths->getSchemaPath(), $schId, static::ROOT_DIR_NAME);
+        $instRootPath = $this->paths->joinPath($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
+        $schRootPath = $this->paths->joinPath($this->paths->getSchemaPath(), $schId, static::ROOT_DIR_NAME);
 
         if ($params->filePath !== null) {
-            $filePathInst = $this->paths->createPath($instRootPath, $params->filePath);
-            $filePathSch = $this->paths->createPath($schRootPath, $params->filePath);
+            $filePathInst = $this->paths->joinPath($instRootPath, $params->filePath);
+            $filePathSch = $this->paths->joinPath($schRootPath, $params->filePath);
 
             if (file_exists($filePathInst)) {
                 return $filePathInst;
             } else if (file_exists($filePathSch)) {
                 return $filePathSch;
             }
-            throw new BaseException(sprintf('File do not exists. File Inst : %s. File Sch : %s.', $filePathInst, $filePathSch));
+            throw new BaseException("File do not exists. File Inst : {$filePathInst}. File Sch : {$filePathSch}.");
 
         } else if ($params->folderPath !== null) {
-            $folderPathInst = $this->paths->createPath($instRootPath, $params->folderPath);
+            $folderPathInst = $this->paths->joinPath($instRootPath, $params->folderPath);
             if (file_exists($folderPathInst) && is_dir($folderPathInst)) {
 
                 foreach (scandir($folderPathInst) as $item) {
@@ -64,16 +64,38 @@ class ResourceService
                         continue;
                     }
 
-                    if (is_dir($item)) continue;
+                    if (is_dir($item)) continue;//641 poprawka do zorbienia
                     return $folderPathInst . DIRECTORY_SEPARATOR . $item;
                 }
             }
 
-            throw new BaseException(sprintf('Directory do not exists. Directory: %s.', $folderPathInst));
-
+            throw new BaseException("Directory do not exists. Directory:  {$folderPathInst}");
 
         } else {
-            throw new BaseException(sprintf('File do not exists. File path: %s. Directory path: %s.', $params->filePath, $params->folderPath));
+            throw new BaseException("File do not exists. File path: {$params->filePath}. Directory path: {$params->folderPath}");
         }
+    }
+
+    /**
+     * @param User $user
+     * @param Installation $installation
+     * @param string $folderPath
+     * @param UploadedFile $file
+     * @return array
+     * @throws InstallationNotAssignedException
+     * @throws BaseException
+     */
+    public function writeResourceFile(User $user, Installation $installation, string $folderPath, UploadedFile $file): array
+    {
+        if ($installation->isAssignedToUser($user) === false) {
+            throw new InstallationNotAssignedException();
+        }
+
+        $instBarcode = (string)$installation->getInstallationBarcode();
+        $instRootPath = $this->paths->joinPath($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
+        $folderPathDest = $this->paths->joinPath($instRootPath, $folderPath);
+        $file->move($folderPathDest, $file->getClientOriginalName());
+
+        return [];
     }
 }
