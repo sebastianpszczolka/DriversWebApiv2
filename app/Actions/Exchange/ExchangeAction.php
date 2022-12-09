@@ -7,6 +7,7 @@ use App\Actions\BaseAction;
 use App\Exceptions\ValidationException;
 use App\Services\Exchange\Exchange;
 use App\Validators\Exchange\ExchangeValidator;
+use Exception;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ class ExchangeAction extends BaseAction
 
     /**
      * @throws ValidationException
-     * @throws \Exception
+     * @throws Exception
      */
     public function __invoke(): JsonResponse
     {

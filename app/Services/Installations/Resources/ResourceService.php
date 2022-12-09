@@ -59,13 +59,14 @@ class ResourceService
             $folderPathInst = $this->paths->joinPath($instRootPath, $params->folderPath);
             if (file_exists($folderPathInst) && is_dir($folderPathInst)) {
 
-                foreach (scandir($folderPathInst) as $item) {
-                    if (in_array($item, ['.', '..'])) {
+                foreach (scandir($folderPathInst) as $file) {
+                    if (in_array($file, ['.', '..'])) {
                         continue;
                     }
 
-                    if (is_dir($item)) continue;//641 poprawka do zorbienia
-                    return $folderPathInst . DIRECTORY_SEPARATOR . $item;
+                    $file = $folderPathInst . DIRECTORY_SEPARATOR . $file;
+                    if (is_dir($file)) continue;
+                    return $file;
                 }
             }
 
