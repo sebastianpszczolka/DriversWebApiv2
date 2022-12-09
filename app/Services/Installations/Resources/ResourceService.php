@@ -56,7 +56,7 @@ class ResourceService
             throw new BaseException("File do not exists. File Inst : {$filePathInst}. File Sch : {$filePathSch}.");
 
         } else if ($params->folderPath !== null) {
-            $folderPathInst = $this->paths->joinPath($instRootPath, $params->folderPath);
+            $folderPathInst = $this->paths->remove_dot_segments($this->paths->joinPath($instRootPath, $params->folderPath));
             if (file_exists($folderPathInst) && is_dir($folderPathInst)) {
 
                 foreach (scandir($folderPathInst) as $file) {
@@ -94,7 +94,7 @@ class ResourceService
 
         $instBarcode = (string)$installation->getInstallationBarcode();
         $instRootPath = $this->paths->joinPath($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
-        $folderPathDest = $this->paths->joinPath($instRootPath, $folderPath);
+        $folderPathDest =  $this->paths->remove_dot_segments($this->paths->joinPath($instRootPath, $folderPath));
         $file->move($folderPathDest, $file->getClientOriginalName());
 
         return [];
