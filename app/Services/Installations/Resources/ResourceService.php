@@ -45,8 +45,8 @@ class ResourceService
         $schRootPath = $this->paths->joinPath($this->paths->getSchemaPath(), $schId, static::ROOT_DIR_NAME);
 
         if ($params->filePath !== null) {
-            $filePathInst = $this->paths->joinPath($instRootPath, $params->filePath);
-            $filePathSch = $this->paths->joinPath($schRootPath, $params->filePath);
+            $filePathInst = $this->paths->remove_dot_segments($this->paths->joinPath($instRootPath, $params->filePath));
+            $filePathSch = $this->paths->remove_dot_segments($this->paths->joinPath($schRootPath, $params->filePath));
 
             if (file_exists($filePathInst)) {
                 return $filePathInst;
