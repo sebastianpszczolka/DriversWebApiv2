@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Services\Exchange\Utils;
 
+use App\Utils\CommonConst;
+
 class CommandsHelper
 {
     public static function dataToArray(string $data): array

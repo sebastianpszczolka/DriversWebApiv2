@@ -1,17 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Services\Exchange\Utils;
+namespace App\Utils;
 
 use Exception;
 
 class PathHelper
 {
-    public static function combine(): string
+    public static function combine(...$args): string
     {
-        $paths = func_get_args();
-
-        return implode(DIRECTORY_SEPARATOR, $paths);
+        return implode(DIRECTORY_SEPARATOR, $args);
     }
 
     /**
@@ -53,6 +51,28 @@ class PathHelper
         if (!is_dir($dirPath)) {
             throw new Exception("Can not create directory: {$dirPath}");
         }
+    }
+
+    public static function fixPathTraversal(string $path): string
+    {
+        $path = explode(DIRECTORY_SEPARATOR, $path);
+        $stack = array();
+        foreach ($path as $seg) {
+            if ($seg == '..') {
+                // Ignore this segment, remove last segment from stack
+                array_pop($stack);
+                continue;
+            }
+
+            if ($seg == '.') {
+                // Ignore this segment
+                continue;
+            }
+
+            $stack[] = $seg;
+        }
+
+        return implode(DIRECTORY_SEPARATOR, $stack);
     }
 
 }

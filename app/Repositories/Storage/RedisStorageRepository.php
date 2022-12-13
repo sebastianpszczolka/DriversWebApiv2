@@ -10,6 +10,7 @@ use App\Http\Requests\Storage\ReadDeviceRequest;
 use App\Http\Requests\Storage\ReadMsgBoxRequest;
 use App\Http\Requests\Storage\WriteDeviceRequest;
 use App\Loggers\DefaultLogger;
+use Generator;
 use Illuminate\Support\Facades\Redis;
 
 class RedisStorageRepository implements StorageRepository
@@ -19,6 +20,7 @@ class RedisStorageRepository implements StorageRepository
     private const KEY_DEVICE = '/Device/';
     private const KEY_TIMESTAMP = 'timestamp';
     private const KEY_STREAM = 'sysStreamInp';
+    private const KEY_VALUE = 'val';
 
     public function __construct(DefaultLogger $logger)
     {
@@ -119,5 +121,46 @@ class RedisStorageRepository implements StorageRepository
             'Src' => ['Time' => time(), 'install' => $data->Src->install],
             'Dst' => ['Node' => $data->Dst->Node, 'install' => $data->Dst->install]
         ]);
+    }
+
+    public function getCommandsForInstallation(string $install, array $keys = []): array
+    {
+        $keys_read = [];
+        if (empty($keys)) {
+            foreach ($this->scanAllForMatch("{$install}*") as $value) {
+                $keys_read[] = $value;
+            }
+
+        } else {
+            foreach ($keys as $value) {
+                $keys_read[] = $install . $value;
+            }
+        }
+
+        $values_read = Redis::pipeline(function ($pipe) use (&$keys_read) {
+            foreach ($keys_read as $key) {
+                $pipe->hGet($key, RedisStorageRepository::KEY_VALUE);
+            }
+        });
+
+        return array_filter(array_combine($keys_read, $values_read), fn($n) => $n !== false);
+    }
+
+    private function scanAllForMatch(string $pattern): Generator
+    {
+        $it = null;
+
+        do {
+            $result = Redis::scan($it, ['match' => $pattern, 'count' => 10000]);
+            if ($result === false) {
+                return;
+            } else {
+                list($it, $keys) = $result;
+                foreach ($keys as $key) {
+                    yield $key;
+                }
+            }
+
+        } while ($it > 0);
     }
 }

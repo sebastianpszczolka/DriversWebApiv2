@@ -5,10 +5,11 @@ namespace App\Http\Requests\Storage;
 
 use Spatie\DataTransferObject\FlexibleDataTransferObject;
 
-class WriteDeviceDstRequest extends FlexibleDataTransferObject
+class WriteDeviceNowSrcRequest extends FlexibleDataTransferObject
 {
     public int $Node;
-
+    public int $Ucsn;
+    public int $Time;
     public int $install;
-    public string $mount;
+
 }

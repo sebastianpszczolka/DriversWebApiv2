@@ -47,17 +47,6 @@ class Paths
     }
 
     /**
-     * @param ...$args
-     * @return string
-     */
-    public function joinPath(...$args): string
-    {
-        $args[0] = rtrim($args[0], '/');
-
-        return implode(DIRECTORY_SEPARATOR, $args);
-    }
-
-    /**
      * Return index path from app config
      *
      * @return string
@@ -87,25 +76,4 @@ class Paths
         return Config::get('app.paths.sch_path');
     }
 
-    function remove_dot_segments(string $path): string
-    {
-        $path = explode('/', $path);
-        $stack = array();
-        foreach ($path as $seg) {
-            if ($seg == '..') {
-                // Ignore this segment, remove last segment from stack
-                array_pop($stack);
-                continue;
-            }
-
-            if ($seg == '.') {
-                // Ignore this segment
-                continue;
-            }
-
-            $stack[] = $seg;
-        }
-
-        return implode('/', $stack);
-    }
 }

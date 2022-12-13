@@ -11,4 +11,8 @@ use App\Repositories\Logs\Dto\LogsGenerateParamsDto;
 interface LogsRepository
 {
     public function getLogs(GetLogsRequestData $logsParams, LogsGenerateParamsDto $generateParams): LogsDataDto;
+
+    public function storeLog(string $pathFile, array $data): void;
+
+
 }

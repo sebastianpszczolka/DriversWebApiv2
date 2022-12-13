@@ -21,4 +21,7 @@ interface StorageRepository
     public function writeDev(WriteDeviceRequest $data): WriteDeviceDto;
 
     public function readMsgBox(ReadMsgBoxRequest $data): ReadMsgBoxDto;
+
+    public function getCommandsForInstallation(string $install, array $keys = []): array;
+
 }

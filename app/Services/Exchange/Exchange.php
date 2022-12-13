@@ -7,8 +7,7 @@ use App\Libraries\Paths;
 use App\Loggers\DefaultLogger;
 use App\Services\Exchange\Utils\Commands;
 use App\Services\Exchange\Utils\CommandsHelper;
-use App\Services\Exchange\Utils\PathHelper;
-use Illuminate\Support\Facades\Config;
+use App\Utils\PathHelper;
 use Exception;
 
 class Exchange

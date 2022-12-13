@@ -11,6 +11,7 @@ use App\Http\Requests\Installations\Resources\ReadResourceRequest;
 use App\Libraries\Paths;
 use App\Repositories\Installation\InstallationStatusRepository;
 use Illuminate\Http\UploadedFile;
+use App\Utils\PathHelper;
 
 class ResourceService
 {
@@ -41,12 +42,12 @@ class ResourceService
         $instBarcode = (string)$installation->getInstallationBarcode();
         $schId = $this->installationStatusRepository->getSchemaNoByInstallationBarcode($instBarcode);
 
-        $instRootPath = $this->paths->joinPath($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
-        $schRootPath = $this->paths->joinPath($this->paths->getSchemaPath(), $schId, static::ROOT_DIR_NAME);
+        $instRootPath = PathHelper::combine($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
+        $schRootPath = PathHelper::combine($this->paths->getSchemaPath(), $schId, static::ROOT_DIR_NAME);
 
         if ($params->filePath !== null) {
-            $filePathInst = $this->paths->remove_dot_segments($this->paths->joinPath($instRootPath, $params->filePath));
-            $filePathSch = $this->paths->remove_dot_segments($this->paths->joinPath($schRootPath, $params->filePath));
+            $filePathInst = PathHelper::fixPathTraversal(PathHelper::combine($instRootPath, $params->filePath));
+            $filePathSch = PathHelper::fixPathTraversal(PathHelper::combine($schRootPath, $params->filePath));
 
             if (file_exists($filePathInst)) {
                 return $filePathInst;
@@ -56,7 +57,7 @@ class ResourceService
             throw new BaseException("File do not exists. File Inst : {$filePathInst}. File Sch : {$filePathSch}.");
 
         } else if ($params->folderPath !== null) {
-            $folderPathInst = $this->paths->remove_dot_segments($this->paths->joinPath($instRootPath, $params->folderPath));
+            $folderPathInst = PathHelper::fixPathTraversal(PathHelper::combine($instRootPath, $params->folderPath));
             if (file_exists($folderPathInst) && is_dir($folderPathInst)) {
 
                 foreach (scandir($folderPathInst) as $file) {
@@ -93,8 +94,8 @@ class ResourceService
         }
 
         $instBarcode = (string)$installation->getInstallationBarcode();
-        $instRootPath = $this->paths->joinPath($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
-        $folderPathDest =  $this->paths->remove_dot_segments($this->paths->joinPath($instRootPath, $folderPath));
+        $instRootPath = PathHelper::combine($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
+        $folderPathDest = PathHelper::fixPathTraversal(PathHelper::combine($instRootPath, $folderPath));
         $file->move($folderPathDest, $file->getClientOriginalName());
 
         return [];

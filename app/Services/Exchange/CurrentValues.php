@@ -4,8 +4,8 @@ namespace App\Services\Exchange;
 
 use App\Loggers\DefaultLogger;
 use App\Services\Exchange\Utils\CommandsHelper;
-use App\Services\Exchange\Utils\CommonConst;
-use App\Services\Exchange\Utils\PathHelper;
+use App\Utils\CommonConst;
+use App\Utils\PathHelper;
 use Exception;
 
 class CurrentValues
