@@ -67,8 +67,8 @@ class StorageService
     {
         $commandsForLog = $this->storeRepository->getCommandsForInstallation((string)$data->Src->install, $data->var);
 
-        $filePathInst = PathHelper::fixPathTraversal(PathHelper::combine($this->paths->getInstBasePath((string)$data->Src->install),
-            $data->Dst->fileName));
+        $fileUserGiven = PathHelper::fixPathTraversal($data->Dst->fileName);
+        $filePathInst = PathHelper::combine($this->paths->getInstBasePath((string)$data->Src->install), $fileUserGiven);
 
         PathHelper::createFileIfNotExist($filePathInst);
         $this->storeLog($filePathInst, new DateTime(), $commandsForLog);
