@@ -18,11 +18,14 @@ class LogsParamsValidator extends AbstractValidator
             'week' => 'integer|between:1,54',
             'month' => 'integer|between:1,12',
             'day' => 'integer|between:1,31',
+            'commands' => 'present|array'
         ];
 
         $this->messages = [
             'integer' => trans('validation.value_must_be_numeric'),
             'between' => trans('validation.number_must_be_between'),
+            'array' => trans('validation.is_array_required'),
+            'present' => trans('validation.is_required')
         ];
     }
 

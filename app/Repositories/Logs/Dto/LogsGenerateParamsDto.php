@@ -6,14 +6,12 @@ namespace App\Repositories\Logs\Dto;
 class LogsGenerateParamsDto
 {
     protected string $mode;
-    protected int $instBarcode;
-    protected array $commands;
+    protected string $instBarcode;
 
-    public function __construct(string $mode, int $instBarcode, array $commands)
+    public function __construct(string $mode, string $instBarcode)
     {
         $this->mode = $mode;
         $this->instBarcode = $instBarcode;
-        $this->commands = $commands;
     }
 
     public function getMode(): string
@@ -21,15 +19,8 @@ class LogsGenerateParamsDto
         return $this->mode;
     }
 
-    public function getInstBarcode(): int
+    public function getInstBarcode(): string
     {
         return $this->instBarcode;
     }
-
-
-    public function getCommands(): array
-    {
-        return $this->commands;
-    }
-
 }

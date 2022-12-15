@@ -10,13 +10,5 @@ class LogsResponseDto extends DataTransferObject
     public string $data;
     public array $headers;
 
-    public function jsonSerialize(): array
-    {
-        return [
-            'headers' => $this->headers,
-            'data' => $this->data,
-        ];
-    }
-
 }
 

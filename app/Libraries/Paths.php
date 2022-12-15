@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Libraries;
 
+use App\Exceptions\InstallationNotFoundException;
 use Illuminate\Support\Facades\Config;
 
 class Paths
@@ -11,7 +12,8 @@ class Paths
     /**
      * Return base path for installation obtained from INDEX file
      * @param string $instBarcode
-     * @return string|null
+     * @return string
+     * @throws InstallationNotFoundException
      */
     public function getInstBasePath(string $instBarcode): ?string
     {
@@ -23,7 +25,7 @@ class Paths
             return $this->adjustPath($path);
         }
 
-        return null;
+        throw new InstallationNotFoundException();
     }
 
     /**

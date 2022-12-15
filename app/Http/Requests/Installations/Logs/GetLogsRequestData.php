@@ -10,4 +10,6 @@ class GetLogsRequestData extends FlexibleDataTransferObject
     public ?int $month;
     public ?int $week;
     public ?int $day;
+
+    public array $commands;
 }
