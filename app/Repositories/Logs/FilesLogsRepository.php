@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Repositories\Logs;
 
 use App\Enum\LogsRangeModes;
+use App\Exceptions\BaseException;
 use App\Http\Requests\Installations\Logs\GetLogsRequestData;
 use App\Libraries\Paths;
+use App\Loggers\DefaultLogger;
 use App\Repositories\Logs\Dto\LogsDataDto;
 use App\Repositories\Logs\Dto\LogsGenerateParamsDto;
 use App\Utils\PathHelper;
@@ -18,10 +20,16 @@ class FilesLogsRepository implements LogsRepository
 {
     private Paths $paths;
     const NAME_LOG = 'LOG';
+    private DefaultLogger $logger;
 
-    public function __construct(Paths $paths)
+    /**
+     * @param Paths $paths
+     * @param DefaultLogger $logger
+     */
+    public function __construct(Paths $paths, DefaultLogger $logger)
     {
         $this->paths = $paths;
+        $this->logger = $logger;
     }
 
     /**
@@ -94,39 +102,46 @@ class FilesLogsRepository implements LogsRepository
         $jsonFile = PathHelper::combine($folderPath, "{$fileName}.json");
         $sevenZipFile = "{$jsonFile}.7z";
 
-        $result = [];
-
-        $realFilePath = null;
-
+        //choose file to process.
         if (file_exists($jsonFile)) {
             $realFilePath = $jsonFile;
-//            $fileContent = file_get_contents($jsonFile);
-
         } else if (file_exists($sevenZipFile)) {
             $realFilePath = 'po rozkapkowaniua 7z';
         } else {
-            throw new Exception("No data in CONTROLLERS catalog {$jsonFile} or {$sevenZipFile}");
+            throw new BaseException("No data in CONTROLLERS catalog {$jsonFile} or {$sevenZipFile}");
         }
+
+        $commands = array_flip($commands);
+        $result = [];
 
         try {
             $fHandle = fopen($realFilePath, 'r');
-            while(!feof($fHandle)) {
-                fgets($fHandle);
-//                echo fgets($fHandle). "<br>";
+
+            while (!feof($fHandle)) {
+                try {
+                    $record = fgets($fHandle);
+                    if (empty($record)) {
+                        $this->logger->warning("prepareData->EmptyRecord in {$realFilePath}");
+                        continue;
+                    }
+
+                    $recordParsed = json_decode($record, true);
+                    if (is_null($recordParsed)) {
+                        $this->logger->warning("prepareData->json_decode in {$record}");
+                        continue;
+                    }
+
+                    $result[] = array_intersect_key($recordParsed, $commands);
+                } catch (Throwable $e) {
+                    $this->logger->warning("Exception->prepareData File: {$realFilePath}", [$e->getMessage()]);
+                    throw new BaseException("Exception->prepareData File: {$realFilePath}");
+                }
             }
-
-        } catch (Throwable $e) {
-
         } finally {
             fclose($fHandle);
         }
 
-
-        echo($jsonFile);
-//        echo($fileName);
-//        echo($folderPath);
-
-        return $commands;
+        return $result;
     }
 //    private function prepareData(string $filePath, string $fileDirPath): string
 //    {
