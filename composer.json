@@ -6,15 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.4|^8.0",
+        "ext-json": "*",
+        "ext-redis": "^5.3",
+        "ext-zlib": "*",
         "fruitcake/laravel-cors": "^2.0",
+        "gemorroj/archive7z": "^5.4",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
         "laravel/passport": "^10.4",
         "laravel/tinker": "^2.5",
-        "spatie/data-transfer-object": "^2.8",
-        "ext-redis": "^5.3",
-        "ext-json": "*",
-      "ext-zlib": "*"
+        "spatie/data-transfer-object": "^2.8"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

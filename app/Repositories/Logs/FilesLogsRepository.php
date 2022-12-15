@@ -6,6 +6,7 @@ namespace App\Repositories\Logs;
 use App\Enum\LogsRangeModes;
 use App\Exceptions\BaseException;
 use App\Http\Requests\Installations\Logs\GetLogsRequestData;
+use App\Libraries\CustomArchive7z;
 use App\Libraries\Paths;
 use App\Loggers\DefaultLogger;
 use App\Repositories\Logs\Dto\LogsDataDto;
@@ -82,13 +83,13 @@ class FilesLogsRepository implements LogsRepository
     {
         switch ($mode) {
             case LogsRangeModes::DAY_MODE:
-                return "{$barcode}_{$logsParams->year}{$logsParams->month}{$logsParams->day}";
+                return sprintf('%s_%d%02d%02d', $barcode, $logsParams->year, $logsParams->month, $logsParams->day);
             case LogsRangeModes::WEEK_MODE:
-                return "{$barcode}_{$logsParams->year}w{$logsParams->week}";
+                return sprintf('%s_%dw%02d', $barcode, $logsParams->year, $logsParams->week);
             case LogsRangeModes::MONTH_MODE:
-                return "{$barcode}_{$logsParams->year}{$logsParams->month}";
+                return sprintf('%s_%d%02d', $barcode, $logsParams->year, $logsParams->month);
             case LogsRangeModes::YEAR_MODE:
-                return "{$barcode}_{$logsParams->year}";
+                return sprintf('%s_%d', $barcode, $logsParams->year);
             default:
                 throw new Exception('Unknown logs mode: ' . $mode);
         }
@@ -102,26 +103,51 @@ class FilesLogsRepository implements LogsRepository
         $jsonFile = PathHelper::combine($folderPath, "{$fileName}.json");
         $sevenZipFile = "{$jsonFile}.7z";
 
-        //choose file to process.
         if (file_exists($jsonFile)) {
-            $realFilePath = $jsonFile;
+            $result = $this->getCommandsFromFile($jsonFile, $commands);
+
         } else if (file_exists($sevenZipFile)) {
-            $realFilePath = 'po rozkapkowaniua 7z';
+            $archive = new CustomArchive7z($sevenZipFile, null, 120);
+            $archive->setOutputDirectory($folderPath);
+            $archive->extract();
+
+            if (!file_exists($jsonFile)) {
+                throw new BaseException(static::class . '::prepareData', "Unpacked file does not exists {$jsonFile}");
+            }
+
+            $result = $this->getCommandsFromFile($jsonFile, $commands);
+            $removed = unlink($jsonFile);
+
+            if ($removed === false) {
+                $this->logger->warning("Cannot remove extracted file {$jsonFile}");
+            }
+
         } else {
-            throw new BaseException("No data in CONTROLLERS catalog {$jsonFile} or {$sevenZipFile}");
+            throw new BaseException(static::class . '::prepareData', "No data in CONTROLLERS catalog {$jsonFile} or {$sevenZipFile}");
         }
 
+        return $result;
+    }
+
+    /**
+     * @param string $filePath
+     * @param array $commands
+     * @return array
+     * @throws BaseException
+     */
+    private function getCommandsFromFile(string $filePath, array $commands): array
+    {
         $commands = array_flip($commands);
         $result = [];
 
         try {
-            $fHandle = fopen($realFilePath, 'r');
+            $fHandle = fopen($filePath, 'r');
 
             while (!feof($fHandle)) {
                 try {
                     $record = fgets($fHandle);
                     if (empty($record)) {
-                        $this->logger->warning("prepareData->EmptyRecord in {$realFilePath}");
+                        $this->logger->warning("prepareData->EmptyRecord in {$filePath}");
                         continue;
                     }
 
@@ -130,11 +156,10 @@ class FilesLogsRepository implements LogsRepository
                         $this->logger->warning("prepareData->json_decode in {$record}");
                         continue;
                     }
-
                     $result[] = array_intersect_key($recordParsed, $commands);
                 } catch (Throwable $e) {
-                    $this->logger->warning("Exception->prepareData File: {$realFilePath}", [$e->getMessage()]);
-                    throw new BaseException("Exception->prepareData File: {$realFilePath}");
+                    $this->logger->warning("Exception->prepareData File: {$filePath}", [$e->getMessage()]);
+                    throw new BaseException(static::class . '::prepareData', "prepareData File: {$filePath}");
                 }
             }
         } finally {
@@ -143,62 +168,4 @@ class FilesLogsRepository implements LogsRepository
 
         return $result;
     }
-//    private function prepareData(string $filePath, string $fileDirPath): string
-//    {
-//        $jsonFile = "{$filePath}.json";
-//        $sevenZipFile = "{$jsonFile}.7z";
-//
-//        $result = [];
-//
-//        // Helper variable for zipped file
-//        $fileContent = null;
-//
-//        if (file_exists($jsonFile)) {
-//            $fileContent = file_get_contents($jsonFile);
-//        } else if (file_exists($sevenZipFile)) {
-//            $archive = new CustomArchive7z($sevenZipFile);
-//            $archive->setOutputDirectory($fileDirPath);
-//            $archive->extract();
-//
-//            if (!file_exists($jsonFile)) {
-//                throw new BaseException(static::class . '::prepareFile', "Unpacked file does not exists {$jsonFile}");
-//            }
-//
-//            $fileContent = file_get_contents($jsonFile);
-//            $removed = unlink($jsonFile);
-//
-//            if ($removed === false) {
-//                Logger::log('Exception', "Cannot remove extracted file [{$jsonFile}]", static::class . '::prepareFile', 'high', 0);
-//            }
-//        } else {
-//            throw new Exception('No data in CONTROLLERS catalog, ' . $jsonFile);
-//        }
-//
-//        $records = explode("\r\n", $fileContent);
-//
-//        if (!(count($records) > 0)) {
-//            return gzencode(json_encode($result), 9);
-//        }
-//
-//        $extractedCommands = $this->extractCommands($chartLastChange);
-//
-//        foreach ($records as $record) {
-//            $recordParsed = json_decode($record, true);
-//            $recordResult = [];
-//
-//            if (is_null($recordParsed)) {
-//                continue;
-//            }
-//
-//            foreach ($extractedCommands as $extractedCommand) {
-//                if (isset($recordParsed[$extractedCommand])) {
-//                    $recordResult[$extractedCommand] = $recordParsed[$extractedCommand];
-//                }
-//            }
-//
-//            $result[] = $recordResult;
-//        }
-//
-//        return $result;
-//    }
 }
