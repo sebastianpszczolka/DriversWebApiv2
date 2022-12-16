@@ -34,7 +34,6 @@ class LogsService
      * @param GetLogsRequestData $params
      * @return LogsResponseDto
      * @throws InstallationNotAssignedException
-     * @throws InstallationNotFoundException
      */
     public function getLogs(User $user, Installation $installation, GetLogsRequestData $params): LogsResponseDto
     {
@@ -43,23 +42,20 @@ class LogsService
         }
 
         $headers = [
-//            'Content-Encoding' => 'gzip',
+            'Content-Encoding' => 'gzip',
             'Content-Type' => 'application/json',
         ];
 
         $instBarcode = (string)$installation->getInstallationBarcode();
-
-
         $mode = $this->determineMode($params);
-
         $logsData = $this->logsRepository->getLogs($params, new LogsGenerateParamsDto($mode, $instBarcode));
 
-        return new LogsResponseDto(
-            ['data' => json_encode($logsData->getData()), 'headers' => $headers]
-        );
 //        return new LogsResponseDto(
-//            ['data' => gzencode(json_encode($logsData->getData()), 9), 'headers' => $headers]
+//            ['data' => json_encode($logsData->getData()), 'headers' => $headers]
 //        );
+        return new LogsResponseDto(
+            ['data' => gzencode(json_encode($logsData->getData()), 9), 'headers' => $headers]
+        );
     }
 
     private function determineMode(GetLogsRequestData $params): string
