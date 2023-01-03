@@ -1,5 +1,7 @@
 <?php
+declare(strict_types=1);
 
+use App\Entities\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,18 +15,18 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('password', 255);
-            $table->string('email', 255);
-            $table->boolean('activated')->default(false);
-            $table->string('activation_code', 255)->nullable();
-            $table->timestamp('activated_at')->nullable();
-            $table->string('phone', 14)->nullable();
-            $table->string('first_name', 255)->nullable();
-            $table->string('last_name', 255)->nullable();
-            $table->timestamp('last_login')->nullable();
-            $table->string('reset_password_code', 255)->nullable();
+        Schema::create(User::TABLE, function (Blueprint $table) {
+            $table->increments(User::COLUMN_ID);
+            $table->string(User::COLUMN_PASSWORD, 255);
+            $table->string(User::COLUMN_EMAIL, 255);
+            $table->boolean(User::COLUMN_ACTIVATED)->default(false);
+            $table->string(User::COLUMN_ACTIVATION_CODE, 255)->nullable();
+            $table->timestamp(User::COLUMN_ACTIVATED_AT)->nullable();
+            $table->string(User::COLUMN_PHONE, 14)->nullable();
+            $table->string(User::COLUMN_FIRST_NAME, 255)->nullable();
+            $table->string(User::COLUMN_LAST_NAME, 255)->nullable();
+            $table->timestamp(User::COLUMN_LAST_LOGIN)->nullable();
+            $table->string(User::COLUMN_RESET_PASSWORD_CODE, 255)->nullable();
             $table->timestamps();
         });
     }
@@ -36,6 +38,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists(User::TABLE);
     }
 }

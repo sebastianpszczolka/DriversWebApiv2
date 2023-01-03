@@ -113,7 +113,7 @@ class User extends Authenticatable implements JsonSerializable
 
     public function installations(): BelongsToMany
     {
-        return $this->belongsToMany(Installation::class, InstallationUser::class);
+        return $this->belongsToMany(Installation::class, InstallationUserRole::class);
 
     }
 

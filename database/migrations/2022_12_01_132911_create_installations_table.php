@@ -1,5 +1,7 @@
 <?php
+declare(strict_types=1);
 
+use App\Entities\Installation;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,11 +15,11 @@ class CreateInstallationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('installations', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 100);
-            $table->string('description', 255)->nullable();
-            $table->unsignedBigInteger('inst_barcode')->unique();
+        Schema::create(Installation::TABLE, function (Blueprint $table) {
+            $table->increments(Installation::COLUMN_ID);
+            $table->string(Installation::COLUMN_NAME, 100);
+            $table->string(Installation::COLUMN_DESCRIPTION, 255)->nullable();
+            $table->unsignedBigInteger(Installation::COLUMN_INSTALLATION_BARCODE)->unique();
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateInstallationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('installations');
+        Schema::dropIfExists(Installation::TABLE);
     }
 }

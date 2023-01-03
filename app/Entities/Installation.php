@@ -55,7 +55,7 @@ class Installation extends BaseEntity
 
     public function users_roles(): BelongsToMany
     {
-        return $this->belongsToMany(UserRole::class, InstallationUser::class);
+        return $this->belongsToMany(UserRole::class, InstallationUserRole::class);
     }
 
     public function jsonSerialize(): array

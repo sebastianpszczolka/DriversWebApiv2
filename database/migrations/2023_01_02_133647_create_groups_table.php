@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-use App\Entities\UserRole;
+use App\Entities\Group;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersRolesTable extends Migration
+class CreateGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,10 +15,10 @@ class CreateUsersRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create(UserRole::TABLE, function (Blueprint $table) {
-            $table->increments(UserRole::COLUMN_ID);
-            $table->string(UserRole::COLUMN_ROLE, 32)->unique();
-            $table->string(UserRole::COLUMN_DESCRIPTION, 255)->nullable();
+        Schema::create(Group::TABLE, function (Blueprint $table) {
+            $table->increments(Group::COLUMN_ID);
+            $table->string(Group::COLUMN_NAME)->unique();
+            $table->text(Group::COLUMN_PERMISSIONS)->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateUsersRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(UserRole::TABLE);
+        Schema::dropIfExists(Group::TABLE);
     }
 }
