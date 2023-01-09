@@ -63,6 +63,7 @@ Route::prefix('storage')->group(function () {
 });
 
 Route::post('exchange', Actions\Exchange\ExchangeAction::class);
+Route::post('write_apl', Actions\Storage\WriteAplAction::class);
 
 Route::middleware(['auth:api', 'access.admin'])->group(function () {
     Route::get('admin', function () {
