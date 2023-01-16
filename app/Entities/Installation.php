@@ -5,7 +5,6 @@ namespace App\Entities;
 
 use DateTime;
 use Illuminate\Database\Eloquent\Model as BaseEntity;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
@@ -53,24 +52,13 @@ class Installation extends BaseEntity
         return $user->installations()->whereKey($this->getId())->exists();
     }
 
-    public function users_roles(): BelongsToMany
-    {
-        return $this->belongsToMany(UserRole::class, InstallationUserRole::class);
-    }
-
     public function jsonSerialize(): array
     {
-        $user_role = $this->users_roles()->first();
-        if (is_null($user_role)) {
-            $user_role = [];
-        }
-
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
-            'installationBarcode' => $this->getInstallationBarcode(),
-            'user_role' => $user_role,
+            'installationBarcode' => $this->getInstallationBarcode()
         ];
     }
 }
