@@ -12,6 +12,8 @@ use App\Http\Requests\Storage\ReadMsgBoxRequest;
 use App\Http\Requests\Storage\WriteDeviceNowRequest;
 use App\Http\Requests\Storage\WriteDeviceRequest;
 use App\Libraries\Paths;
+use App\Loggers\DefaultLogger;
+use App\Repositories\Database\Objects\ObjectsRepository;
 use App\Repositories\Storage\StorageRepository;
 use App\Utils\CommonConst;
 use App\Utils\PathHelper;
@@ -21,21 +23,74 @@ use Exception;
 class StorageService
 {
     private StorageRepository $storeRepository;
+    private ObjectsRepository $objectsRepository;
     private Paths $paths;
+    private DefaultLogger $logger;
+
 
     /**
+     * @param DefaultLogger $logger
+     * @param ObjectsRepository $objectsRepository
      * @param StorageRepository $storeRepository
      * @param Paths $paths
      */
-    public function __construct(StorageRepository $storeRepository, Paths $paths)
+    public function __construct(DefaultLogger     $logger,
+                                ObjectsRepository $objectsRepository,
+                                StorageRepository $storeRepository,
+                                Paths             $paths)
     {
+        $this->logger = $logger;
+        $this->objectsRepository = $objectsRepository;
         $this->storeRepository = $storeRepository;
         $this->paths = $paths;
+
     }
 
     public function readApl(array $data): array
     {
-        return $this->storeRepository->readApl($data);
+        // First Stage get value by keys from main storage
+        $resultsStorage = $this->storeRepository->readApl($data);
+
+        // Second Stage get value by missing keys in main storage
+        $missedEntriesStorage = array_keys(array_filter($resultsStorage, function ($value) {
+            return empty($value);
+        }));
+
+        if (empty($missedEntriesStorage)) {
+            return $resultsStorage;
+        }
+
+        $resultsBackendStorage = $this->objectsRepository->getByKeys($missedEntriesStorage);
+        foreach ($resultsBackendStorage as $resultSecondStorage) {
+            $resultsStorage[$resultSecondStorage->getKey()] = json_decode($resultSecondStorage->getValue());
+        }
+
+        // Third Stage get value by missing keys but remove index node to make request more general
+        $missedEntriesStorage = array_keys(array_filter($resultsStorage, function ($value) {
+            return empty($value);
+        }));
+
+        if (empty($missedEntriesStorage)) {
+            return $resultsStorage;
+        }
+
+        //fix array of missing entries to remove index node and look again in db for more general answer
+        $missedEntriesStorageFixed = [];
+        foreach ($missedEntriesStorage as $missedEntry) {
+            try {
+                [, $missedEntryFix] = explode('/', $missedEntry, 2);
+                $missedEntriesStorageFixed[$missedEntryFix] = $missedEntry;
+            } catch (Exception $e) {
+                $this->logger->error($e->getMessage());
+            }
+        }
+
+        $resultsBackendStorage = $this->objectsRepository->getByKeys(array_keys($missedEntriesStorageFixed));
+        foreach ($resultsBackendStorage as $resultSecondStorage) {
+            $resultsStorage[$missedEntriesStorageFixed[$resultSecondStorage->getKey()]] = json_decode($resultSecondStorage->getValue());
+        }
+
+        return $resultsStorage;
     }
 
     public function writeApl(array $data): array
