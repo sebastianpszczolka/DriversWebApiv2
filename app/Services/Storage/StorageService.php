@@ -79,7 +79,7 @@ class StorageService
         foreach ($missedEntriesStorage as $missedEntry) {
             try {
                 [, $missedEntryFix] = explode('/', $missedEntry, 2);
-                $missedEntriesStorageFixed[$missedEntryFix] = $missedEntry;
+                $missedEntriesStorageFixed["/{$missedEntryFix}"] = $missedEntry;
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }

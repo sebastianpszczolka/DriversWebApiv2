@@ -33,6 +33,9 @@ Route::prefix('reset-password')->group(function () {
 });
 
 Route::middleware('auth:api')->group(function () {
+
+    Route::get('settings', Actions\UserCfg\ReadUserCfgAction::class);
+    Route::post('settings', Actions\UserCfg\WriteUserCfgAction::class);
     Route::post('logout', Actions\Auth\LogoutAction::class);
 
     Route::prefix('storage')->group(function () {
