@@ -7,11 +7,14 @@ use App\Entities\Installation;
 use App\Entities\User;
 use App\Exceptions\BaseException;
 use App\Exceptions\InstallationNotAssignedException;
+use App\Exceptions\InstallationNotFoundException;
+use App\Http\Requests\Installations\Resources\ListResourceRequest;
 use App\Http\Requests\Installations\Resources\ReadResourceRequest;
 use App\Libraries\Paths;
 use App\Repositories\Installation\InstallationStatusRepository;
-use Illuminate\Http\UploadedFile;
 use App\Utils\PathHelper;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 class ResourceService
 {
@@ -23,6 +26,45 @@ class ResourceService
     {
         $this->paths = $paths;
         $this->installationStatusRepository = $installationStatusRepository;
+    }
+
+    /**
+     * @param User $user
+     * @param Installation $installation
+     * @param ListResourceRequest $params
+     * @return array|string
+     * @throws BaseException
+     * @throws InstallationNotAssignedException
+     * @throws InstallationNotFoundException
+     */
+    public function listResourceFolderPath(User $user, Installation $installation, ListResourceRequest $params): array
+    {
+        $result = [];
+        if ($installation->isAssignedToUser($user) === false) {
+            throw new InstallationNotAssignedException();
+        }
+
+        $instBarcode = (string)$installation->getInstallationBarcode();
+        $instRootPath = PathHelper::combine($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
+
+        $folderPathInst = PathHelper::fixPathTraversal(PathHelper::combine($instRootPath, $params->folderPath));
+        if (file_exists($folderPathInst) && is_dir($folderPathInst)) {
+
+            foreach (scandir($folderPathInst) as $file) {
+                if (in_array($file, ['.', '..'])) {
+                    continue;
+                }
+
+                $file = $params->folderPath . DIRECTORY_SEPARATOR . $file;
+                if (is_dir($file) || !Str::endsWith(strtolower($file), '.html')) continue;
+                $result[] = $file;
+            }
+        } else {
+            throw new BaseException("Directory do not exists. Directory:  {$folderPathInst}");
+        }
+
+        return $result;
+
     }
 
     /**
