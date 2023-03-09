@@ -56,7 +56,8 @@ class ResourceService
                 }
 
                 $file = $params->folderPath . DIRECTORY_SEPARATOR . $file;
-                if (is_dir($file) || !Str::endsWith(strtolower($file), '.html')) continue;
+                if (is_dir($file) || (!Str::endsWith(strtolower($file), '.html') && !Str::endsWith(strtolower($file), '.htm'))) continue;
+
                 $result[] = $file;
             }
         } else {
