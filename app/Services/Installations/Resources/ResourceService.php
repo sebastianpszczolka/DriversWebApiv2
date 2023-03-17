@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 class ResourceService
 {
     private const ROOT_DIR_NAME = 'VISU';
+    private const ROOT_DIR_DEFAULT = 'DEF';
     private Paths $paths;
     private InstallationStatusRepository $installationStatusRepository;
 
@@ -87,17 +88,21 @@ class ResourceService
 
         $instRootPath = PathHelper::combine($this->paths->getInstBasePath($instBarcode), static::ROOT_DIR_NAME);
         $schRootPath = PathHelper::combine($this->paths->getSchemaPath(), $schId, static::ROOT_DIR_NAME);
+        $schDefRootPath = PathHelper::combine($schRootPath, static::ROOT_DIR_DEFAULT);
 
         if ($params->filePath !== null) {
             $filePathInst = PathHelper::fixPathTraversal(PathHelper::combine($instRootPath, $params->filePath));
             $filePathSch = PathHelper::fixPathTraversal(PathHelper::combine($schRootPath, $params->filePath));
+            $filePathDefSch = PathHelper::fixPathTraversal(PathHelper::combine($schDefRootPath, basename($params->filePath)));
 
             if (file_exists($filePathInst)) {
                 return $filePathInst;
             } else if (file_exists($filePathSch)) {
                 return $filePathSch;
+            } else if (file_exists($filePathDefSch)) {
+                return $filePathDefSch;
             }
-            throw new BaseException("File do not exists. File Inst : {$filePathInst}. File Sch : {$filePathSch}.");
+            throw new BaseException("File do not exists. File Inst : {$filePathInst}. File Sch : {$filePathSch}. File SchDef : {$filePathDefSch}.");
 
         } else if ($params->folderPath !== null) {
             $folderPathInst = PathHelper::fixPathTraversal(PathHelper::combine($instRootPath, $params->folderPath));
