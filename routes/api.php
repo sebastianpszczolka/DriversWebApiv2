@@ -44,6 +44,10 @@ Route::middleware('auth:api')->group(function () {
         Route::post('read_apl', Actions\Storage\ReadAplAction::class);
     });
 
+    Route::prefix('resources')->group(function () {
+        Route::get('common', Actions\Resources\GetResourcesCommonAction::class);
+    });
+
     Route::prefix('installations')->group(function () {
         Route::get('', Actions\Installations\GetInstallationsAction::class);
 

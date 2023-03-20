@@ -15,11 +15,13 @@ use App\Repositories\Installation\InstallationStatusRepository;
 use App\Utils\PathHelper;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Zip;
 
 class ResourceService
 {
     private const ROOT_DIR_NAME = 'VISU';
     private const ROOT_DIR_DEFAULT = 'DEF';
+    private const ROOT_DIR_COMMON = 'CommonResources';
     private Paths $paths;
     private InstallationStatusRepository $installationStatusRepository;
 
@@ -147,5 +149,30 @@ class ResourceService
         $file->move($folderPathDest, $file->getClientOriginalName());
 
         return [];
+    }
+
+    /**
+     * @throws BaseException
+     */
+    public function getCommonResourceFolderZipped()
+    {
+        $files = [];
+        $commResPath = PathHelper::fixPathTraversal(PathHelper::combine($this->paths->getControllersPath(), static::ROOT_DIR_COMMON));
+
+        if (file_exists($commResPath) && is_dir($commResPath)) {
+
+            foreach (scandir($commResPath) as $file) {
+                if (in_array($file, ['.', '..'])) {
+                    continue;
+                }
+                $file = $commResPath . DIRECTORY_SEPARATOR . $file;
+                if (is_dir($file)) continue;
+                $files[] = $file;
+            }
+        } else {
+            throw new BaseException("Directory do not exists. Directory:  {$commResPath}");
+        }
+
+        return Zip::create("Common.zip", $files);
     }
 }
