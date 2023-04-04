@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\Redis;
 
 class RedisStorageRepository implements StorageRepository
 {
-
     private DefaultLogger $logger;
     private const KEY_DEVICE = '/Device/';
     private const KEY_TIMESTAMP = 'timestamp';
     private const KEY_STREAM = 'sysStreamInp';
     private const KEY_VALUE = 'val';
+    private const EXPIRATION_TIME = 86400;
 
     public function __construct(DefaultLogger $logger)
     {
@@ -43,6 +43,7 @@ class RedisStorageRepository implements StorageRepository
             foreach ($data as $key => $set) {
                 if (is_array($set)) {
                     $pipe->hMSet($key, $set);
+                    $pipe->expire($key, RedisStorageRepository::EXPIRATION_TIME);
                 } else {
                     $pipe->Set($key, $set);
                 }
@@ -90,6 +91,7 @@ class RedisStorageRepository implements StorageRepository
                 if (is_array($set)) {
                     $set[RedisStorageRepository::KEY_TIMESTAMP] = time();
                     $pipe->hMSet($key, $set);
+                    $pipe->expire($key, RedisStorageRepository::EXPIRATION_TIME);
                 } else {
                     $pipe->Set($key, $set);
                 }
