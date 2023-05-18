@@ -84,7 +84,11 @@ class RedisStorageRepository implements StorageRepository
     public function writeDev(WriteDeviceRequest $data): WriteDeviceDto
     {
         Redis::pipeline(function ($pipe) use (&$data) {
-            $pipe->hMSet($data->Src->install . RedisStorageRepository::KEY_DEVICE . $data->Src->Node, [RedisStorageRepository::KEY_TIMESTAMP => time()]);
+
+            $keyDevice = $data->Src->install . RedisStorageRepository::KEY_DEVICE . $data->Src->Node;
+            $pipe->hMSet($keyDevice, [RedisStorageRepository::KEY_TIMESTAMP => time()]);
+            $pipe->expire($keyDevice, RedisStorageRepository::EXPIRATION_TIME);
+
             foreach ($data->var as $key => $set) {
                 $key = $data->Src->install . $data->Dst->mount . $key;
 
