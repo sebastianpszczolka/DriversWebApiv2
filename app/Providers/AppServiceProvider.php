@@ -8,8 +8,8 @@ use App\Repositories\Logs\FilesLogsRepository;
 use App\Repositories\Logs\LogsRepository;
 use App\Repositories\Storage\RedisStorageRepository;
 use App\Repositories\Storage\StorageRepository;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Repositories\Storage\v1\RedisStorageRepositoryApl;
+use App\Repositories\Storage\v1\StorageRepositoryApl;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StorageRepository::class, RedisStorageRepository::class);
         $this->app->bind(LogsRepository::class, FilesLogsRepository::class);
         $this->app->bind(InstallationStatusRepository::class, FilesInstallationStatusRepository::class);
+        $this->app->bind(StorageRepositoryApl::class, RedisStorageRepositoryApl::class);
     }
 
     /**

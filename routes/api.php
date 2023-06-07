@@ -80,3 +80,16 @@ Route::middleware(['auth:api', 'access.admin'])->group(function () {
     });
 });
 
+Route::middleware('auth:api')->group(function () {
+    Route::prefix('v1')->group(function () {
+        Route::prefix('installations')->group(function () {
+            Route::prefix('{installationID}')->group(function () {
+                Route::prefix('storage')->group(function () {
+                    Route::post('read_apl', Actions\Installations\Storage\v1\ReadAplAction::class);
+                    Route::post('write_apl', Actions\Installations\Storage\v1\WriteAplAction::class);
+                });
+            });
+        });
+    });
+
+});
