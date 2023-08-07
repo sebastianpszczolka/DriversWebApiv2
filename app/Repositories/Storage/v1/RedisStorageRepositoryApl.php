@@ -50,7 +50,7 @@ class RedisStorageRepositoryApl implements StorageRepositoryApl
         foreach ($data->variables as $key => $value) {
             $listPath = Redis::hGet($node . $key, RedisStorageRepositoryApl::KEY_STREAM);
             if (!empty($listPath)) {
-                Redis::lPush($node . $listPath, json_encode([$key => time()]));
+                Redis::lPush($node . $listPath, json_encode([$key => ['value' => $value, 'time' => time()]]));
             }
         }
 
