@@ -59,7 +59,7 @@ class RedisStorageRepository implements StorageRepository
 
             $listPath = Redis::hGet($key, RedisStorageRepository::KEY_STREAM);
             if (!empty($listPath)) {
-                Redis::lPush($items[0] . $listPath, json_encode(['/' . $items[1] => time()]));
+                Redis::lPush($items[0] . $listPath, json_encode(['/' . $items[1] => ['value' => $value, 'time' => time()]]));;
             }
         }
 
